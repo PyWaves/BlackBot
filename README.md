@@ -1,0 +1,2 @@
+# BlackBot
+Grid Trading Bot
