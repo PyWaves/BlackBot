@@ -3,7 +3,10 @@ import datetime
 import time
 import os
 import sys
-import ConfigParser
+try:
+	import configparser
+except ImportError:
+	import ConfigParser as configparser
 
 
 COLOR_RESET = "\033[0;0m"
@@ -71,7 +74,7 @@ if not os.path.isfile(CFG_FILE):
 # parse config file
 try:
     log("%sReading config file '%s'" % (COLOR_RESET, CFG_FILE))
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     config.read(CFG_FILE)
 
     NODE = config.get('main', 'node')
@@ -147,7 +150,8 @@ if basePrice == 0:
 
 log("Grid initialisation [base price : %.*f]" % (PAIR.asset2.decimals, float(basePrice) / 10 ** PAIR.asset2.decimals))
 
-last_level = GRID_LEVELS / 2
+last_level = int(GRID_LEVELS / 2)
+
 if GRID_TYPE == "SYMMETRIC" or GRID_TYPE == "BIDS":
     for n in range(last_level - 1, -1, -1):
         place_order("buy", n)
@@ -167,7 +171,7 @@ while True:
         # loop through all grid levels
         # first all ask levels from the lowest ask to the highest -> range(grid.index("") + 1, len(grid))
         # then all bid levels from the highest to the lowest -> range(grid.index("") - 1, -1, -1)
-        for n in range(last_level + 1, len(grid)) + range(last_level - 1, -1, -1):
+        for n in list(range(last_level + 1, len(grid))) + list(range(last_level - 1, -1, -1)):
 
             # find the order with id == grid[n] in the history list
 
