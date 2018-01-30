@@ -8,6 +8,20 @@ For example, let’s say the last price is 2000 satoshis you’ve got sells ladd
 
 ## Getting Started
 
+BlackBot requires Python 2.7 or 3.x and the following Python packages:
+
+* PyWaves
+* ConfigParser (with Python 2.7)
+* configparser (with Python 3.x)
+
+You can install them with
+
+```
+pip install pywaves
+pip install ConfigParser (python 2.7)
+pip install configparser (python 3.x)
+```
+
 You can start BlackBot with this command:
 
 ```
