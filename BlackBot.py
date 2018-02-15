@@ -78,6 +78,7 @@ try:
     config.read(CFG_FILE)
 
     NODE = config.get('main', 'node')
+    NETWORK = config.get('main', 'network')
     MATCHER = config.get('main', 'matcher')
     ORDER_FEE = config.getint('main', 'order_fee')
     ORDER_LIFETIME = config.getint('main', 'order_lifetime')
@@ -94,8 +95,6 @@ try:
 
     LOGFILE = config.get('logging', 'logfile')
 
-    BLACKBOT = pw.Address(privateKey=PRIVATE_KEY)
-
     log("-" * 80)
     log("          Address : %s" % BLACKBOT.address)
     log("  Amount Asset ID : %s" % amountAssetID)
@@ -107,8 +106,9 @@ except:
     log("Exiting.")
     exit(1)
 
-pw.setNode(NODE, "mainnet")
+pw.setNode(NODE, NETWORK)
 pw.setMatcher(MATCHER)
+BLACKBOT = pw.Address(privateKey=PRIVATE_KEY)
 PAIR = pw.AssetPair(pw.Asset(amountAssetID), pw.Asset(priceAssetID))
 
 # grid list with GRID_LEVELS items. item n is the ID of the order placed at the price calculated with this formula
