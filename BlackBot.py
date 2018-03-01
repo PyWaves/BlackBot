@@ -94,13 +94,6 @@ try:
     GRID_TYPE = config.get('grid', 'type').upper()
 
     LOGFILE = config.get('logging', 'logfile')
-
-    log("-" * 80)
-    log("          Address : %s" % BLACKBOT.address)
-    log("  Amount Asset ID : %s" % amountAssetID)
-    log("   Price Asset ID : %s" % priceAssetID)
-    log("-" * 80)
-    log("")
 except:
     log("Error reading config file")
     log("Exiting.")
@@ -110,6 +103,13 @@ pw.setNode(NODE, NETWORK)
 pw.setMatcher(MATCHER)
 BLACKBOT = pw.Address(privateKey=PRIVATE_KEY)
 PAIR = pw.AssetPair(pw.Asset(amountAssetID), pw.Asset(priceAssetID))
+
+log("-" * 80)
+log("          Address : %s" % BLACKBOT.address)
+log("  Amount Asset ID : %s" % amountAssetID)
+log("   Price Asset ID : %s" % priceAssetID)
+log("-" * 80)
+log("")
 
 # grid list with GRID_LEVELS items. item n is the ID of the order placed at the price calculated with this formula
 # price = int(basePrice * (1 + INTERVAL) ** (n - GRID_LEVELS / 2))
