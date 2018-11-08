@@ -32,7 +32,7 @@ below you can find a sample configuration file:
 ```
 [main]
 node = http://nodes.wavesnodes.com
-matcher = http://nodes.wavesnodes.com
+matcher = http://matcher.wavesnodes.com
 order_fee = 300000
 order_lifetime = 86400
 
