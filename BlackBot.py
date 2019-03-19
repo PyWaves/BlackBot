@@ -3,6 +3,7 @@ import datetime
 import time
 import os
 import sys
+import random
 try:
 	import configparser
 except ImportError:
@@ -37,11 +38,12 @@ def place_order(order_type, level):
         price = grid_price(level)
         try:
             balance_amount, balance_price = BLACKBOT.tradableBalance(PAIR)
-            if order_type == "buy" and balance_price >= (TRANCHE_SIZE * price / 10 ** float(PAIR.asset1.decimals)):
-                o = BLACKBOT.buy(PAIR, TRANCHE_SIZE, price, maxLifetime=ORDER_LIFETIME, matcherFee=ORDER_FEE)
+            tranche_size = int(TRANCHE_SIZE * (1 - (FLEXIBILITY / float(200)) + (random.random() * FLEXIBILITY / float(100))))
+            if order_type == "buy" and balance_price >= (tranche_size * price / 10 ** float(PAIR.asset1.decimals)):
+                o = BLACKBOT.buy(PAIR, tranche_size, price, maxLifetime=ORDER_LIFETIME, matcherFee=ORDER_FEE)
             elif order_type == "sell" and balance_amount >= TRANCHE_SIZE:
                 price -= 1
-                o = BLACKBOT.sell(PAIR, TRANCHE_SIZE, price, maxLifetime=ORDER_LIFETIME, matcherFee=ORDER_FEE)
+                o = BLACKBOT.sell(PAIR, tranche_size, price, maxLifetime=ORDER_LIFETIME, matcherFee=ORDER_FEE)
             id = o.orderId
             log(">> [%03d] %s%-4s order  %18.*f%s" % (level, COLOR_GREEN if order_type == "buy" else COLOR_RED, order_type.upper(), PAIR.asset2.decimals, float(price) / 10 ** PAIR.asset2.decimals, COLOR_RESET))
         except:
@@ -89,6 +91,7 @@ try:
 
     INTERVAL = config.getfloat('grid', 'interval')
     TRANCHE_SIZE = config.getint('grid', 'tranche_size')
+    FLEXIBILITY = config.getint('grid', 'flexibility')
     GRID_LEVELS = config.getint('grid', 'grid_levels')
     GRID_BASE = config.get('grid', 'base').upper()
     GRID_TYPE = config.get('grid', 'type').upper()
