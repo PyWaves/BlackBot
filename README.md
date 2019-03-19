@@ -78,6 +78,8 @@ logfile = bot.log
 
 ```base``` is the price level around which the grid is setup; it can be LAST, for the last traded price, BID for the current bid price, ASK for the current ask price or a fixed constant price can be specified
 
+```flexibility``` amount flexibility in percent, 20% flexibility means that the amount of the order might flucture +/- 10% around the defined tranche_size
+
 ```type``` the initial grid can be SYMMETRIC, if there are both buy and sell orders; BIDS if the are only buy orders; ASKS if there are only sell orders
 
 #### logging section
