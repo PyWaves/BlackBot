@@ -36,16 +36,19 @@ def grid_price(level):
 def place_order(order_type, level):
     if 0 <= level < GRID_LEVELS and (grid[level] == "" or grid[level] == "-"):
         price = grid_price(level)
+        price = int(price / 100) * 100
+        price = round(price / 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)), 8)
+        price = float(str(price))
         try:
             balance_amount, balance_price = BLACKBOT.tradableBalance(PAIR)
             tranche_size = int(TRANCHE_SIZE * (1 - (FLEXIBILITY / float(200)) + (random.random() * FLEXIBILITY / float(100))))
-            if order_type == "buy" and balance_price >= (tranche_size * price / 10 ** float(PAIR.asset1.decimals)):
+            if order_type == "buy" and balance_price >= (tranche_size * price / 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals))):
                 o = BLACKBOT.buy(PAIR, tranche_size, price, maxLifetime=ORDER_LIFETIME, matcherFee=ORDER_FEE)
-            elif order_type == "sell" and balance_amount >= TRANCHE_SIZE:
-                price -= 1
+            elif order_type == "sell":# and balance_amount >= (tranche_size * price / 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals))):
+                #price -= 1
                 o = BLACKBOT.sell(PAIR, tranche_size, price, maxLifetime=ORDER_LIFETIME, matcherFee=ORDER_FEE)
             id = o.orderId
-            log(">> [%03d] %s%-4s order  %18.*f%s" % (level, COLOR_GREEN if order_type == "buy" else COLOR_RED, order_type.upper(), PAIR.asset2.decimals, float(price) / 10 ** PAIR.asset2.decimals, COLOR_RESET))
+            log(">> [%03d] %s%-4s order  %18.*f%s" % (level, COLOR_GREEN if order_type == "buy" else COLOR_RED, order_type.upper(), PAIR.asset2.decimals, price, COLOR_RESET))
         except:
             id = ""
         grid[level] = id
@@ -53,7 +56,8 @@ def place_order(order_type, level):
 
 def get_last_price():
     try:
-        last_trade_price = int(round(float(PAIR.trades(1)[0]['price']) * 10 ** PAIR.asset2.decimals))
+        #last_trade_price = int(round(float(PAIR.trades(1)[0]['price']) * 10 ** PAIR.asset2.decimals))
+        last_trade_price = int(round(float(PAIR.trades(1)[0]['price'] * 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)))))
     except:
         last_trade_price = 0
     return last_trade_price
@@ -151,7 +155,8 @@ if basePrice == 0:
     log("Exiting.")
     exit(1)
 
-log("Grid initialisation [base price : %.*f]" % (PAIR.asset2.decimals, float(basePrice) / 10 ** PAIR.asset2.decimals))
+#log("Grid initialisation [base price : %.*f]" % (PAIR.asset2.decimals, float(basePrice) / 10 ** PAIR.asset2.decimals))
+log("Grid initialisation [base price : %.*f]" % (PAIR.asset2.decimals, float(basePrice) / 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals))))
 
 last_level = int(GRID_LEVELS / 2)
 
@@ -187,7 +192,7 @@ while True:
                 last_level = n
                 filled_price = order[0].get("price")
                 filled_type = order[0].get("type")
-                log("## [%03d] %s%-4s Filled %18.*f%s" % (n, COLOR_BLUE, filled_type.upper(), PAIR.asset2.decimals, float(filled_price) / 10 ** PAIR.asset2.decimals, COLOR_RESET))
+                log("## [%03d] %s%-4s Filled %18.*f%s" % (n, COLOR_BLUE, filled_type.upper(), PAIR.asset2.decimals, float(filled_price) / 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)), COLOR_RESET))
 
                 if filled_type == "buy":
                     if filled_price >= last_price:
