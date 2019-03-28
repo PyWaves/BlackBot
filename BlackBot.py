@@ -57,7 +57,9 @@ def place_order(order_type, level):
 def get_last_price():
     try:
         #last_trade_price = int(round(float(PAIR.trades(1)[0]['price']) * 10 ** PAIR.asset2.decimals))
-        last_trade_price = int(round(float(PAIR.trades(1)[0]['price'] * 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)))))
+        last_trade_price = int(float(PAIR.trades(1)[0]['price']) * 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)))
+        #print(last_trade_price)
+        #last_trade_price = int(round(float(PAIR.trades(1)[0]['price'] * 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)))))
     except:
         last_trade_price = 0
     return last_trade_price
