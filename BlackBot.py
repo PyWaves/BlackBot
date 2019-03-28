@@ -56,10 +56,7 @@ def place_order(order_type, level):
 
 def get_last_price():
     try:
-        #last_trade_price = int(round(float(PAIR.trades(1)[0]['price']) * 10 ** PAIR.asset2.decimals))
         last_trade_price = int(float(PAIR.trades(1)[0]['price']) * 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)))
-        #print(last_trade_price)
-        #last_trade_price = int(round(float(PAIR.trades(1)[0]['price'] * 10 ** (PAIR.asset2.decimals + (PAIR.asset2.decimals - PAIR.asset1.decimals)))))
     except:
         last_trade_price = 0
     return last_trade_price
@@ -86,7 +83,6 @@ try:
     config.read(CFG_FILE)
 
     NODE = config.get('main', 'node')
-    NETWORK = config.get('main', 'network')
     MATCHER = config.get('main', 'matcher')
     ORDER_FEE = config.getint('main', 'order_fee')
     ORDER_LIFETIME = config.getint('main', 'order_lifetime')
@@ -103,22 +99,23 @@ try:
     GRID_TYPE = config.get('grid', 'type').upper()
 
     LOGFILE = config.get('logging', 'logfile')
+
+    BLACKBOT = pw.Address(privateKey=PRIVATE_KEY)
+
+    log("-" * 80)
+    log("          Address : %s" % BLACKBOT.address)
+    log("  Amount Asset ID : %s" % amountAssetID)
+    log("   Price Asset ID : %s" % priceAssetID)
+    log("-" * 80)
+    log("")
 except:
     log("Error reading config file")
     log("Exiting.")
     exit(1)
 
-pw.setNode(NODE, NETWORK)
+pw.setNode(NODE, "mainnet")
 pw.setMatcher(MATCHER)
-BLACKBOT = pw.Address(privateKey=PRIVATE_KEY)
 PAIR = pw.AssetPair(pw.Asset(amountAssetID), pw.Asset(priceAssetID))
-
-log("-" * 80)
-log("          Address : %s" % BLACKBOT.address)
-log("  Amount Asset ID : %s" % amountAssetID)
-log("   Price Asset ID : %s" % priceAssetID)
-log("-" * 80)
-log("")
 
 # grid list with GRID_LEVELS items. item n is the ID of the order placed at the price calculated with this formula
 # price = int(basePrice * (1 + INTERVAL) ** (n - GRID_LEVELS / 2))
